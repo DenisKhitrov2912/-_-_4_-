@@ -54,9 +54,10 @@ def get_api_data(api_url, params=None, limit=None):
 
 
 # Пример использования
-api_url = 'https://api.hh.ru/vacancies'
+api_url = 'https://api.superjob.ru/vacancies'
+api_key = "v3.r.138027493.de3940650341c40e73bce40058da6ac022f850d0.78bba7fe34dbe518fd654d088f8a1d465eec97f8"
 words = input("Поиск по профессиям: ")
-params = {'text': words}
+params = {'text': input("Поиск по профессиям: ")}
 while True:
     try:
         limit = int(input("Введите количество результатов. Максимальное число результатов на странице - 20 "))
