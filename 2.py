@@ -32,7 +32,7 @@ class GetApiDataSuperJob(GetApiData):
     def get_api_data(self):
         api_url = "https://api.superjob.ru/2.0/vacancies/"
         headers = {
-            "X-Api-App-Id": os.getenv("SJ_API_KEY")
+            "X-Api-App-Id": "v3.r.138027493.de3940650341c40e73bce40058da6ac022f850d0.78bba7fe34dbe518fd654d088f8a1d465eec97f8"
         }
 
         params = {

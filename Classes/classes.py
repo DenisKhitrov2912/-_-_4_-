@@ -88,7 +88,7 @@ class Vacancies:
         self.class_instance = class_instance
 
     def get_object_data(self):
-        dict_vacations = {}
+        dict_vacancies = {}
         if isinstance(self.class_instance, GetApiDataHeadHunter):
             data = self.class_instance.get_api_data()
             keys = ["items"]
@@ -122,11 +122,12 @@ class Vacancies:
                                 city_address = "Город не указан"
                             else:
                                 city_address = v["address"]["city"]
-                            key = f"{v['id']}, {v['name']}, {salary} {salary_to} {salary_currency}, {v['alternate_url']}, {city_address}, {v['employer']['name']}, {v['employer']['alternate_url']}"
-                            dict_vacations[key] = self.salary
+                            link = f'https://hh.ru/vacancy/{v["id"]}'
+                            key = f"{v['id']},  {v['name']},  {salary},  {salary_to},  {salary_currency},  {city_address},  {v['employer']['name']},  {link}"
+                            dict_vacancies[key] = self.salary
                     else:
                         break
-            return dict_vacations
+            return dict_vacancies
         else:
             for vacancy in self.class_instance.get_api_data():
                 if vacancy["payment_from"] == 0 and vacancy["payment_to"] == 0:
@@ -143,18 +144,41 @@ class Vacancies:
                     vacancy["payment_to"] = ''
                 elif vacancy["payment_to"] != 0 and vacancy["payment_from"] != 0:
                     self.salary = vacancy["payment_to"]
-                key = f'{vacancy["id"]}, {vacancy["profession"]}, {vacancy["payment_from"]} {vacancy["payment_to"]} {vacancy["currency"]}, {vacancy["town"]["title"]}, ссылка: {vacancy["client"]["link"]}'
-                dict_vacations[key] = self.salary
-            return dict_vacations
+                key = f'{vacancy["id"]},  {vacancy["profession"]},  {vacancy["payment_from"]},  {vacancy["payment_to"]},  {vacancy["currency"]},  {vacancy["town"]["title"]},  {vacancy["link"]}'
+                dict_vacancies[key] = self.salary
+            return dict_vacancies
 
     def salary_comparison(self):
-        vacations_sorted = []
+        vacancies_sorting = []
+        vacancies_sorted = []
         salary_sorting = sorted(list(self.get_object_data().values()), reverse=True)
         for salary in salary_sorting:
             for key, value in self.get_object_data().items():
                 if salary == value:
-                    vacations_sorted.append(key)
-        return vacations_sorted
+                    vacancies_sorting.append(key)
+        for i in vacancies_sorting:
+            if i not in vacancies_sorted:
+                vacancies_sorted.append(i)
+        return vacancies_sorted
+
+    def vacancies_list(self):
+        vacancies_list = []
+        if isinstance(self.class_instance, GetApiDataHeadHunter):
+            for vacancies in self.salary_comparison():
+                vacancies_dict = {"id": vacancies.split(",  ")[0], "name": vacancies.split(",  ")[1],
+                                  "start_salary": vacancies.split(",  ")[2], "end_salary": vacancies.split(",  ")[3],
+                                  "currency": vacancies.split(",  ")[4],
+                                  "town": vacancies.split(",  ")[5], "employer": vacancies.split(",  ")[6],
+                                  "link": vacancies.split(",  ")[7]}
+                vacancies_list.append(vacancies_dict)
+        else:
+            for vacancies in self.salary_comparison():
+                vacancies_dict = {"id": vacancies.split(",  ")[0], "name": vacancies.split(",  ")[1],
+                                  "start_salary": vacancies.split(",  ")[2], "end_salary": vacancies.split(",  ")[3],
+                                  "currency": vacancies.split(",  ")[4], "town": vacancies.split(",  ")[5],
+                                  "link": vacancies.split(",  ")[6]}
+                vacancies_list.append(vacancies_dict)
+        return vacancies_list
 
 
 class AppData(ABC):
@@ -177,8 +201,8 @@ class JsonData(AppData):
         self.class_object = class_object
 
     def data_add(self):
-        with open('api_data.json', 'a', encoding='utf-8') as json_file:
-            json.dump(self.class_object.get_api_data(), json_file, ensure_ascii=False, indent=4)
+        with open('api_data.json', 'w', encoding='utf-8') as json_file:
+            json.dump(self.class_object.vacancies_list(), json_file, ensure_ascii=False, indent=4)
         print(f"Данные успешно сохранены в api_data.json")
 
     def data_read(self):
@@ -194,3 +218,5 @@ class JsonData(AppData):
 b = GetApiDataHeadHunter()
 c = Vacancies(b)
 print(c.salary_comparison())
+d = JsonData(c)
+d.data_add()
