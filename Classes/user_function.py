@@ -1,21 +1,22 @@
-from GetApiData import GetApiDataHeadHunter, GetApiDataSuperJob
+#from Classes.GetApiData import GetApiDataHeadHunter, GetApiDataSuperJob
 from Vacancies import Vacancies
 from JsonData import JsonData
 
 
 def user_function():
     print("Привет! Предлагаю поискать работу.")
+
     while True:
         user_input = input("Какой сайт Вас интересует? Нажмите 1, если HeadHunter, 2, если Superjob, 0 - выход: ")
         if user_input == "1":
-            headhunter = GetApiDataHeadHunter()
-            vacancies = Vacancies(headhunter)
-            json_data = JsonData(vacancies)
-            json_data.data_add()
-            second_user_input = input("Хотите вывести данные о вакансиях в консоль? 1 - да, 2 - нет, 0 - выход: ")
+            vacancies = Vacancies()
+            vac_list = vacancies.vacancies_list_hh()
+            json_data = JsonData()
+            json_data.add(vac_list)
+            second_user_input = input("Хотите вывести результаты в консоль? 1 - да, 2 - нет, 0 - выход: ")
             while True:
                 if second_user_input == "1":
-                    json_data.data_read()
+                    json_data.read()
                     break
                 elif second_user_input == "2":
                     break
@@ -25,10 +26,10 @@ def user_function():
                 else:
                     print("Введите 1, 2 или 0!")
                     continue
-            third_user_input = input("Хотите удалить список вакансий? 1 - да, 2 - нет, 0 - выход: ")
+            third_user_input = input("Хотите удалить результаты поиска? 1 - да, 2 - нет, 0 - выход: ")
             while True:
                 if third_user_input == "1":
-                    json_data.data_del()
+                    json_data.delete()
                     break
                 elif third_user_input == "2":
                     break
@@ -49,14 +50,14 @@ def user_function():
                     print("Введите 1, 2 или 0!")
                     continue
         elif user_input == "2":
-            superjob = GetApiDataSuperJob()
-            vacancies = Vacancies(superjob)
-            json_data = JsonData(vacancies)
-            json_data.data_add()
+            vacancies = Vacancies()
+            vac_list = vacancies.vacancies_list_sj()
+            json_data = JsonData()
+            json_data.add(vac_list)
             second_user_input = input("Хотите вывести данные о вакансиях в консоль? 1 - да, 2 - нет, 0 - выход: ")
             while True:
                 if second_user_input == "1":
-                    json_data.data_read()
+                    json_data.read()
                     break
                 elif second_user_input == "2":
                     break
@@ -69,7 +70,7 @@ def user_function():
             third_user_input = input("Хотите удалить список вакансий? 1 - да, 2 - нет, 0 - выход: ")
             while True:
                 if third_user_input == "1":
-                    json_data.data_del()
+                    json_data.delete()
                     break
                 elif third_user_input == "2":
                     break
